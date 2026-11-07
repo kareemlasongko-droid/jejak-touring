@@ -26,6 +26,12 @@ export type Trip = {
 export type PantauData = {
   nickname: string;
   vehicle: "mobil" | "motor";
+  vehicle_info: string | null;
+  license_plate: string | null;
+  driver_name: string | null;
+  adult_count: number | null;
+  child_count: number | null;
+  emergency_contact: string | null;
   destination_name: string;
   destination_lat: number;
   destination_lng: number;

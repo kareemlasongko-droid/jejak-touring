@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { AlertTriangle, ArrowLeft, CarFront, Check, CheckCircle2, Clock3, Flag, Gauge, KeyRound, LocateFixed, MapPin, Navigation, RefreshCw, Satellite, ShieldAlert, Square, WifiOff } from "lucide-react";
+import { AlertTriangle, ArrowLeft, CarFront, Check, CheckCircle2, Clock3, Eye, Flag, Gauge, KeyRound, LocateFixed, RefreshCw, Satellite, ShieldAlert, WifiOff } from "lucide-react";
 import { ensureAnonymousSession, supabase } from "@/lib/supabase";
 import type { LocationPoint, Trip } from "@/lib/types";
 import { createAccessCode, distanceInMeters, formatTime, relativeTime } from "@/lib/utils";
@@ -19,6 +19,7 @@ type CurrentPosition = { lat: number; lng: number; speed: number | null; accurac
 type WakeLockSentinelLike = { release: () => Promise<void>; addEventListener: (type: string, listener: () => void) => void };
 
 export function TrackingClient({ tripId }: { tripId: string }) {
+  const isDemo = tripId === "DEMO";
   const [trip, setTrip] = useState<Trip | null>(null);
   const [current, setCurrent] = useState<CurrentPosition | null>(null);
   const [loading, setLoading] = useState(true);
@@ -64,6 +65,35 @@ export function TrackingClient({ tripId }: { tripId: string }) {
   useEffect(() => {
     let active = true;
     async function loadTrip() {
+      if (isDemo) {
+        const now = new Date().toISOString();
+        setTrip({
+          id: "DEMO",
+          user_id: "demo",
+          nickname: "Panther Touring",
+          vehicle: "mobil",
+          vehicle_info: "Panther touring 2001 coklat",
+          license_plate: "B 1234 XYZ",
+          driver_name: "Dimas",
+          adult_count: 3,
+          child_count: 1,
+          emergency_contact: "0812 3456 7890",
+          destination_name: "Bandung",
+          destination_lat: -6.914744,
+          destination_lng: 107.60981,
+          access_code: "TRK-DEMO0-00000",
+          status: "aktif",
+          created_at: now,
+          updated_at: now,
+          arrived_at: null,
+          ended_at: null,
+          sos_at: null,
+        });
+        setCurrent({ lat: -6.597147, lng: 107.044678, speed: 20, accuracy: 8, recordedAt: now });
+        setNotice("Mode demo. GPS dan tombol tidak mengubah data perjalanan nyata.");
+        setLoading(false);
+        return;
+      }
       try {
         await ensureAnonymousSession();
         const { data, error: loadError } = await supabase.from("trips").select("*").eq("id", tripId).single();
@@ -94,7 +124,7 @@ export function TrackingClient({ tripId }: { tripId: string }) {
   }, []);
 
   useEffect(() => {
-    if (!trip || trip.status !== "aktif") return;
+    if (isDemo || !trip || trip.status !== "aktif") return;
     let watchId: number | null = null;
     let cancelled = false;
 
@@ -179,6 +209,13 @@ export function TrackingClient({ tripId }: { tripId: string }) {
     if (!trip) return;
     setActionBusy(true);
     const sosAt = new Date().toISOString();
+    if (isDemo) {
+      setTrip({ ...trip, sos_at: sosAt });
+      setDialog(null);
+      setNotice("Mode demo. SOS hanya ditampilkan di browser ini.");
+      setActionBusy(false);
+      return;
+    }
     const { error: sosError } = await supabase.from("trips").update({ sos_at: sosAt }).eq("id", trip.id);
     if (sosError) setError("SOS belum terkirim. Periksa koneksi dan coba lagi.");
     else { setTrip({ ...trip, sos_at: sosAt }); setDialog(null); setNotice("SOS aktif. Segera hubungi komunitas melalui saluran komunikasi lain."); }
@@ -189,6 +226,12 @@ export function TrackingClient({ tripId }: { tripId: string }) {
     if (!trip) return;
     setActionBusy(true);
     const endedAt = new Date().toISOString();
+    if (isDemo) {
+      setTrip({ ...trip, status: "selesai", ended_at: endedAt });
+      setDialog(null);
+      setActionBusy(false);
+      return;
+    }
     const { error: finishError } = await supabase.from("trips").update({ status: "selesai", ended_at: endedAt }).eq("id", trip.id);
     if (finishError) setError("Perjalanan belum dapat dihentikan. Periksa koneksi dan coba lagi.");
     else {
@@ -202,6 +245,11 @@ export function TrackingClient({ tripId }: { tripId: string }) {
   async function regenerateCode() {
     if (!trip) return;
     setActionBusy(true);
+    if (isDemo) {
+      setTrip({ ...trip, access_code: createAccessCode() });
+      setActionBusy(false);
+      return;
+    }
     const { data, error: codeError } = await supabase.from("trips").update({ access_code: createAccessCode() }).eq("id", trip.id).select("access_code").single();
     if (codeError) setError("Kode baru belum berhasil dibuat. Coba lagi.");
     else setTrip({ ...trip, access_code: data.access_code });
@@ -213,12 +261,24 @@ export function TrackingClient({ tripId }: { tripId: string }) {
 
   const isActive = trip.status === "aktif";
   const isStale = isActive && current && Date.now() - new Date(current.recordedAt).getTime() > 180000;
+  const passengerSummary = `${trip.adult_count ?? 0} dewasa${trip.child_count ? `, ${trip.child_count} anak` : ""}`;
   void tick;
 
   return (
     <div className="tracking-page">
+      {isDemo && <div className="demo-preview-banner" role="status"><Eye size={18} /><span><strong>Preview perjalanan peserta</strong> — data demo, bukan GPS atau perjalanan nyata.</span></div>}
       {error && <div className="error-box" role="alert">{error}</div>}
-      <div className="tracking-head"><div><h1>{trip.nickname}</h1><p><MapPin size={12} /> Menuju {trip.destination_name}</p></div><span className={`status-badge ${isActive ? isStale ? "status-warning" : "status-active" : "status-ended"}`}>{isActive && !isStale && <i className="live-dot" />}{isActive ? isStale ? "Data lama" : "Perjalanan aktif" : trip.status === "tiba" ? "Sudah tiba" : "Perjalanan selesai"}</span></div>
+      <div className="tracking-head">
+        <div className="tracking-trip-summary">
+          <h1>{trip.nickname}</h1>
+          <p>Menuju {trip.destination_name}</p>
+          <div className="participant-trip-info" aria-label="Tentang perjalanan">
+            <div className="monitor-info-row"><div><small>KENDARAAN</small><strong>{trip.vehicle_info || "Mobil"}{trip.license_plate ? ` • ${trip.license_plate}` : ""}</strong></div></div>
+            <div className="monitor-info-row"><div><small>SUPIR & PENUMPANG</small><strong>{trip.driver_name || "Tidak diisi"}</strong><span>{passengerSummary}</span></div></div>
+          </div>
+        </div>
+        <span className={`status-badge ${isActive ? isStale ? "status-warning" : "status-active" : "status-ended"}`}>{isActive && !isStale && <i className="live-dot" />}{isActive ? isStale ? "Data lama" : "Perjalanan aktif" : trip.status === "tiba" ? "Sudah tiba" : "Perjalanan selesai"}</span>
+      </div>
 
       {!isActive ? (
         <section className="panel arrived-card"><div className="arrived-icon">{trip.status === "tiba" ? <Flag size={30} /> : <CheckCircle2 size={30} />}</div><h2>{trip.status === "tiba" ? "Anda sudah tiba di tujuan" : "Perjalanan telah dihentikan"}</h2><p>{trip.status === "tiba" ? "Posisi Anda berada dalam radius 200 meter dari tujuan. Pelacakan dan kode pantau sudah dihentikan otomatis." : "Pelacakan dan kode pantau sudah tidak aktif. Terima kasih telah menggunakan JejakTouring."}</p><Link href="/" className="button button-primary"><Check size={18} /> Kembali ke beranda</Link></section>
@@ -228,7 +288,7 @@ export function TrackingClient({ tripId }: { tripId: string }) {
           <aside className="tracking-side">
             <section className="panel trip-stats"><div className="stat"><Gauge className="stat-icon" size={20} /><small>KECEPATAN</small><strong>{current?.speed != null && current.speed >= 0 ? Math.round(current.speed * 3.6) : "—"} <span>km/j</span></strong></div><div className="stat"><Clock3 className="stat-icon" size={20} /><small>TERAKHIR TERLIHAT</small><strong style={{ fontSize: 14 }}>{current ? relativeTime(current.recordedAt) : "Menunggu GPS"}</strong></div></section>
             <ShareCode code={trip.access_code} compact />
-            <section className="panel tracking-actions"><button className={`button sos-button ${trip.sos_at ? "sos-active" : ""}`} onClick={() => setDialog("sos")} disabled={Boolean(trip.sos_at)}><ShieldAlert size={21} />{trip.sos_at ? "SOS sedang aktif" : "Kirim tanda SOS"}</button><button className="button button-secondary small-action" onClick={() => setCodeOpen(true)}><KeyRound size={17} /> Kode baru</button><button className="button button-secondary small-action finish-button" onClick={() => setDialog("finish")}><Square size={16} /> Selesai touring</button></section>
+            <section className="panel tracking-actions"><button className={`button sos-button ${trip.sos_at ? "sos-active" : ""}`} onClick={() => setDialog("sos")} disabled={Boolean(trip.sos_at)}><ShieldAlert size={21} />{trip.sos_at ? "SOS sedang aktif" : "Kirim tanda SOS"}</button><button className="button button-secondary small-action" onClick={() => setCodeOpen(true)}><KeyRound size={17} /> Buat kode baru</button><button className="button button-secondary small-action finish-button" onClick={() => setDialog("finish")}>Selesai touring</button></section>
             <div className={`last-update ${queueCount ? "queue-note" : ""}`}>{queueCount ? <WifiOff size={14} /> : <LocateFixed size={14} />}<span>{queueCount ? `${queueCount} titik menunggu dikirim` : notice}</span></div>
           </aside>
         </div>

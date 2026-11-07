@@ -1,5 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CarFront, Check, Eye, MapPin, Navigation, ShieldCheck, Smartphone, Wifi } from "lucide-react";
+import { ArrowRight, CarFront, Check, Coffee, Eye, Navigation, ShieldCheck, Smartphone, Wifi } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { ResumeTrip } from "@/components/ResumeTrip";
 
@@ -9,6 +10,7 @@ export default function Home() {
       <nav className="home-nav" aria-label="Navigasi utama">
         <Logo />
         <div className="nav-note"><ShieldCheck size={16} /><span>Perjalanan aman, keluarga tenang</span></div>
+        <a className="coffee-link" href="https://saweria.co/hasbiashiddiqi" target="_blank" rel="noreferrer"><Coffee size={16} /> Traktir kopi</a>
       </nav>
 
       <section className="hero">
@@ -38,27 +40,32 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="hero-visual" aria-label="Contoh tampilan pemantauan perjalanan">
+        <div className="hero-visual" aria-label="Contoh perjalanan touring Jakarta menuju Bandung">
           <div className="visual-note"><Navigation size={15} /> Menuju tujuan bersama</div>
           <div className="demo-window">
             <div className="demo-top"><span>CONTOH PERJALANAN</span><div className="live-pill"><i className="live-dot" /> LIVE</div></div>
-            <div className="demo-map">
-              <svg viewBox="0 0 480 330" fill="none" aria-hidden="true">
-                <path d="M-30 72C81 104 113 49 190 78s107 2 181-20 108-5 148 17M-20 280c88-12 112-75 184-52s101 92 172 65 93-68 166-57M59-20c29 74-11 109 11 165s76 58 70 124-29 74-15 103M379-20c-38 65-11 121 13 151s5 91-31 129-34 76-19 107" stroke="#34372c" strokeWidth="18" />
-                <path d="M-30 72C81 104 113 49 190 78s107 2 181-20 108-5 148 17M-20 280c88-12 112-75 184-52s101 92 172 65 93-68 166-57M59-20c29 74-11 109 11 165s76 58 70 124-29 74-15 103M379-20c-38 65-11 121 13 151s5 91-31 129-34 76-19 107" stroke="#45483a" strokeWidth="2" strokeDasharray="8 12" />
-                <path d="M100 253c32-71 78-39 112-98s83-27 132-76" stroke="#f7c948" strokeWidth="4" strokeLinecap="round" strokeDasharray="7 10" />
-                <circle cx="100" cy="253" r="13" fill="#f7c948" fillOpacity=".18" /><circle cx="100" cy="253" r="7" fill="#f7c948" stroke="#fff0b0" strokeWidth="3" />
-                <path d="M344 61c-11 0-20 9-20 20 0 15 20 32 20 32s20-17 20-32c0-11-9-20-20-20Z" fill="#f7c948" /><circle cx="344" cy="81" r="6" fill="#24251d" />
-                <g fill="#2b2e25"><rect x="170" y="15" width="54" height="29" rx="5" /><rect x="248" y="112" width="65" height="38" rx="6" /><rect x="22" y="140" width="54" height="36" rx="6" /><rect x="396" y="185" width="55" height="40" rx="6" /></g>
+            <div className="demo-map hero-banner-frame">
+              <svg className="hero-map-decoration" viewBox="0 0 500 500" fill="none" aria-hidden="true">
+                <path d="M-30 108C65 67 116 122 179 89s124-23 180 9 94 24 167-13M-25 402c83-38 136-6 184 26s101 12 149-31 115-53 211-18M71-30c18 74-16 119 9 166s69 51 58 115-33 97-11 161M417-20c-37 68-11 116 9 158s-3 89-38 124-29 87-2 129" stroke="#3a3d31" strokeWidth="14" />
+                <path d="M-30 108C65 67 116 122 179 89s124-23 180 9 94 24 167-13M-25 402c83-38 136-6 184 26s101 12 149-31 115-53 211-18M71-30c18 74-16 119 9 166s69 51 58 115-33 97-11 161M417-20c-37 68-11 116 9 158s-3 89-38 124-29 87-2 129" stroke="#626550" strokeWidth="2" strokeDasharray="6 11" />
+                <path d="M38 384c63-48 88-9 133-71s69-53 113-87 82-43 124-105" stroke="#f7c948" strokeWidth="3" strokeLinecap="round" strokeDasharray="5 10" opacity=".7" />
+                <circle cx="38" cy="384" r="9" fill="#f7c948" /><circle cx="408" cy="121" r="9" fill="#f7c948" />
               </svg>
-              <div className="demo-driver">
-                <div className="driver-row">
-                  <div className="driver-avatar"><CarFront size={22} /></div>
-                  <div className="driver-info"><strong>Dimas &amp; Keluarga</strong><small><MapPin size={10} /> Menuju Bandung</small></div>
-                  <div className="driver-speed"><strong>64</strong><small>km/j</small></div>
-                </div>
-                <div className="demo-progress"><span /></div>
-                <div className="demo-caption"><span>Posisi diperbarui baru saja</span><span>62% perjalanan</span></div>
+              <div className="hero-banner-image-wrap">
+                <Image
+                  src="/images/hero-banner.jpg"
+                  alt="Mobil Panther touring dari Jakarta menuju Bandung dengan informasi lokasi, kecepatan, dan SOS"
+                  width={500}
+                  height={500}
+                  sizes="(max-width: 600px) 82vw, (max-width: 850px) 480px, 38vw"
+                  className="hero-banner-image"
+                  priority
+                />
+              </div>
+              <div className="hero-journey-progress" aria-label="Progress perjalanan 62 persen">
+                <div className="hero-progress-label"><span>Perjalanan</span><strong>62%</strong></div>
+                <div className="hero-progress-track"><span /></div>
+                <div className="hero-progress-cities"><span>Jakarta</span><span>Bandung</span></div>
               </div>
             </div>
           </div>
