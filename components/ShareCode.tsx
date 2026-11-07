@@ -8,7 +8,7 @@ export function ShareCode({ code, compact = false }: { code: string; compact?: b
   const [copied, setCopied] = useState(false);
 
   async function copy() {
-    await navigator.clipboard.writeText(monitoringLink(code));
+    await navigator.clipboard.writeText(code);
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2000);
   }
@@ -23,7 +23,7 @@ export function ShareCode({ code, compact = false }: { code: string; compact?: b
         if ((error as Error).name === "AbortError") return;
       }
     }
-    await copy();
+    await navigator.clipboard.writeText(url);
   }
 
   return (

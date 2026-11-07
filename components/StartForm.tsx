@@ -120,7 +120,6 @@ export function StartForm() {
             <div className="field">
               <label htmlFor="trip-name">Masukkan nama perjalanan <span className="required-label">Wajib</span></label>
               <input id="trip-name" value={tripName} onChange={(event) => setTripName(event.target.value)} placeholder="Contoh: Touring keluarga ke Bandung" maxLength={40} required />
-              <span className="field-hint">Nama ini akan terlihat oleh pemegang kode pantau.</span>
             </div>
 
             <button type="button" className="detail-field" onClick={() => setModal("vehicle")}>

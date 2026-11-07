@@ -121,7 +121,7 @@ export function OccupantModal({ initial, onClose, onSave }: { initial: OccupantD
         <input id="emergency-contact" type="tel" inputMode="tel" value={emergencyContact} onChange={(event) => setEmergencyContact(event.target.value)} placeholder="WhatsApp, contoh: 0812 3456 7890" maxLength={25} autoComplete="tel" required />
         <span className="field-hint">Gunakan nomor WhatsApp keluarga atau komunitas yang aktif.</span>
       </div>
-      <div className="info-box modal-privacy"><Info size={16} /><span>Kontak darurat tidak ditampilkan kepada pemegang kode pantau.</span></div>
+      <div className="info-box modal-privacy"><Info size={16} /><span>Kontak darurat hanya ditampilkan kepada pemegang kode pantau aktif untuk keadaan darurat.</span></div>
     </ModalShell>
   );
 }

@@ -37,7 +37,7 @@ Skema database:
 
 - `trips`: pemilik anonim, nama panggilan, kendaraan, tujuan, kode, status, dan SOS.
 - `locations`: titik GPS milik perjalanan.
-- `pantau(p_kode)`: satu-satunya akses pemantau, hanya mengembalikan lokasi terbaru dari perjalanan aktif.
+- `pantau(p_kode)`: satu-satunya akses pemantau, mengembalikan lokasi terbaru, detail kendaraan/penumpang, dan kontak darurat dari perjalanan aktif. Kontak darurat hanya dibagikan kepada pemegang kode pantau aktif.
 
 Pemantau tidak memiliki izin membaca tabel secara langsung. Kode tidak lagi mengembalikan data setelah status menjadi `tiba` atau `selesai`.
 

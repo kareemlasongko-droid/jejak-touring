@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Logo } from "@/components/Logo";
+import { AppHeader } from "@/components/AppHeader";
 import { TrackingClient } from "@/components/TrackingClient";
 
 export const metadata: Metadata = { title: "Perjalanan aktif" };
@@ -10,8 +10,8 @@ export default async function TripPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   return (
     <main className="app-page">
-      <header className="app-header"><div className="app-header-inner"><Logo compact /><Link href="/" className="back-link"><ArrowLeft size={16} /> Beranda</Link></div></header>
-      <div className="page-container"><TrackingClient tripId={id} /></div>
+      <AppHeader />
+      <div className="page-container"><div className="page-back"><Link href="/" className="back-link"><ArrowLeft size={16} /> Kembali</Link></div><TrackingClient tripId={id} /></div>
     </main>
   );
 }
