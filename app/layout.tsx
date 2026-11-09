@@ -3,6 +3,7 @@ import "leaflet/dist/leaflet.css";
 import "./globals.css";
 import { PwaRegister } from "@/components/PwaRegister";
 import { ConnectionBanner } from "@/components/ConnectionBanner";
+import { VisitorTracker } from "@/components/VisitorTracker";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://jejak-touring.vercel.app"),
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         {children}
         <PwaRegister />
         <ConnectionBanner />
+        <VisitorTracker />
       </body>
     </html>
   );

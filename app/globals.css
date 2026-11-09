@@ -153,7 +153,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .field label { font-size: 12px; font-weight: 700; color: #d7d7cc; }
 .field input { width: 100%; height: 53px; border: 1px solid var(--line); background: #151611; border-radius: 13px; color: var(--text); padding: 0 15px; font-size: 15px; }
 .field input::placeholder { color: #65675c; }
-.field input:focus { border-color: var(--yellow); outline: 1px solid var(--yellow); }
+.field input:focus { border-color: var(--yellow); outline: none; }
 .field-hint { color: var(--dim); font-size: 11px; line-height: 1.5; }
 .required-label { color: var(--yellow); font-size: 9px; font-weight: 700; margin-left: 5px; }
 .optional-label { color: var(--dim); font-size: 10px; font-weight: 400; }
@@ -316,6 +316,7 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .share-code p { color: var(--dim); font-size: 10px; line-height: 1.5; max-width: 300px; margin: 0 auto 16px; }
 .share-actions { display: grid; grid-template-columns: 1.3fr 1fr; gap: 8px; }
 .share-actions .button { min-height: 44px; font-size: 11px; padding: 0 10px; }
+.share-new-code { width: 100%; margin-top: 10px; }
 .share-code-compact { padding: 15px; }
 .share-code-compact .access-code { font-size: 19px; }
 
@@ -433,3 +434,157 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* Dashboard admin */
+.admin-dashboard { max-width: 980px; }
+.admin-auth-view { min-height: calc(100dvh - 190px); display: flex; flex-direction: column; justify-content: center; }
+.admin-auth-view .page-heading { text-align: center; }
+.admin-auth-view .page-heading p { margin-inline: auto; }
+.admin-login { width: 100%; max-width: 440px; margin-inline: auto; }
+.admin-login .button { margin-top: 4px; }
+.admin-note { color: var(--dim); font-size: 11px; line-height: 1.6; margin: 18px 0 0; }
+.admin-message { display: flex; align-items: center; gap: 12px; color: var(--muted); align-self: center; }
+.admin-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin: 0 0 32px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.admin-toolbar > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-toolbar .button, .admin-login .button { min-height: 42px; }
+.admin-section-title { display: flex; align-items: center; gap: 9px; margin: 24px 0 14px; }
+.admin-section-title svg { color: var(--yellow); }
+.admin-section-title h2 { font-size: 17px; margin: 0; }
+.admin-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.admin-stats-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-stat { display: flex; flex-direction: column; gap: 8px; min-width: 0; padding: 20px; }
+.admin-stat span { font-size: 12px; color: var(--muted); line-height: 1.4; }
+.admin-stat strong { font-size: clamp(26px, 4vw, 38px); line-height: 1.1; color: var(--yellow); }
+.admin-trips { margin-top: 28px; }
+.admin-trips h2 { margin: 0 0 6px; }
+.admin-trips .panel-intro { margin-bottom: 16px; }
+.admin-trip { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 15px 0; border-top: 1px solid var(--line-soft); }
+.admin-trip > div { min-width: 0; }
+.admin-trip strong { display: block; font-size: 13px; overflow-wrap: anywhere; }
+.admin-trip small { display: block; color: var(--muted); line-height: 1.5; margin-top: 5px; overflow-wrap: anywhere; }
+.admin-detail-toggle { display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; min-height: 36px; padding: 5px 0; border: 0; background: transparent; color: var(--yellow); font-size: 12px; font-weight: 700; }
+.admin-detail-toggle svg { transition: transform .18s; }
+.admin-detail-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+.admin-trip-details { margin: 0 0 15px; padding: 18px; border: 1px solid var(--line-soft); border-radius: 13px; background: #181914; }
+.admin-trip-details > p { margin: 0; color: var(--muted); font-size: 12px; }
+.admin-details-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 25px; margin: 0; }
+.admin-details-grid div { min-width: 0; }
+.admin-details-grid dt { margin-bottom: 5px; color: var(--muted); font-size: 11px; }
+.admin-details-grid dd { margin: 0; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.admin-trip-status { border: 1px solid var(--line); border-radius: 30px; color: var(--muted); font-size: 11px; text-transform: capitalize; padding: 6px 10px; white-space: nowrap; }
+.admin-trip-status.aktif { color: var(--yellow); border-color: #6a5927; }
+.admin-trip-status.tiba { color: #74cc90; border-color: #34734d; }
+.admin-empty { color: var(--muted); font-size: 13px; }
+@media (max-width: 700px) {
+  .admin-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-toolbar { align-items: flex-start; flex-direction: column; }
+}
+@media (max-width: 420px) {
+  .admin-stat { padding: 16px; }
+  .admin-trip { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .admin-details-grid { grid-template-columns: 1fr; }
+}
+
+/* Halaman mulai: desktop memakai satu tinggi layar, mobile tetap scroll. */
+@media (min-width: 900px) and (min-height: 700px) {
+  .start-page { height: 100dvh; display: flex; flex-direction: column; }
+  .start-page .app-header { height: 64px; flex: 0 0 64px; }
+  .start-page .app-header-inner { max-width: 1240px; }
+  .start-page-container { width: 100%; max-width: 1240px; flex: 1; min-height: 0; margin: 0 auto; padding: 12px 24px; display: flex; flex-direction: column; }
+  .start-page .page-back { margin-bottom: 8px; }
+  .start-page .page-heading { margin-bottom: 10px; }
+  .start-page .step-pill { margin-bottom: 4px; }
+  .start-page .page-heading h1 { font-size: 30px; margin-bottom: 0; }
+  .start-form { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .start-form .form-layout { flex: 1; min-height: 0; gap: 16px; }
+  .start-form .form-layout > .panel { min-height: 0; }
+  .start-form .form-layout > .panel:first-child { padding: 18px; overflow-y: auto; }
+  .start-form .panel-intro { margin-bottom: 12px; }
+  .start-form .field { gap: 7px; margin-bottom: 14px; }
+  .start-form .field input { height: 48px; }
+  .start-form .detail-field { min-height: 66px; margin-bottom: 8px; padding: 10px 12px; }
+  .start-form .info-box { padding: 10px 12px; }
+  .start-form .map-panel .map-wrap { height: auto; min-height: 0; flex: 1; }
+  .start-form .map-panel-head { padding: 15px 18px; }
+  .start-form .destination-summary { padding: 12px 18px; }
+  .start-form .form-footer { margin-top: 10px; }
+  .start-form .form-footer .button { min-height: 52px; }
+  .start-form .form-footer-note { margin-top: 6px; }
+}
+
+/* Pantau desktop: peta dan informasi memenuhi layar tanpa menyembunyikan detail. */
+@media (min-width: 900px) and (min-height: 700px) {
+  .monitor-entry-page, .monitor-live-page { height: 100dvh; display: flex; flex-direction: column; }
+  .monitor-entry-page .app-header, .monitor-live-page .app-header { height: 64px; flex: 0 0 64px; }
+  .monitor-entry-page .app-header-inner, .monitor-live-page .app-header-inner { max-width: 1240px; }
+  .monitor-entry-page-container, .monitor-live-page-container { width: 100%; max-width: 1240px; flex: 1; min-height: 0; margin: 0 auto; padding: 12px 24px; display: flex; flex-direction: column; }
+  .monitor-entry-page-container .page-back, .monitor-live-page-container .page-back { margin-bottom: 8px; }
+  .monitor-entry-page .monitor-entry { width: 100%; margin: auto; }
+  .monitor-entry-page .monitor-entry-icon { width: 64px; height: 64px; margin-bottom: 14px; }
+  .monitor-entry-page .page-heading { margin-bottom: 16px; }
+  .monitor-entry-page .monitor-entry .panel { padding: 20px; }
+  .monitor-entry-page .privacy-list { gap: 10px; margin-top: 16px; }
+  .monitor-live-content { flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .monitor-live-content .monitor-heading { margin-bottom: 8px; }
+  .monitor-live-content .monitor-heading h1 { font-size: 24px; margin-bottom: 4px; }
+  .monitor-live-content .demo-preview-banner, .monitor-live-content .stale-banner { margin-bottom: 8px; padding: 8px 12px; }
+  .monitor-live-content .sos-banner, .monitor-live-content .error-box { margin-bottom: 8px; padding: 10px 12px; }
+  .monitor-live-content .monitor-grid { flex: 0 1 auto; min-height: 0; grid-template-columns: minmax(0, 1.35fr) minmax(0, .85fr); align-items: stretch; gap: 14px; }
+  .monitor-live-content .monitor-map-panel { min-height: 0; display: flex; }
+  .monitor-live-content .monitor-map { height: auto; min-height: 0; flex: 1; }
+  .monitor-live-content .empty-location { min-height: 0; }
+  .monitor-live-content .monitor-details { min-height: 0; align-content: start; gap: 8px; overflow-y: auto; }
+  .monitor-live-content .monitor-details .panel { padding: 14px; }
+  .monitor-live-content .person-avatar { width: 40px; height: 40px; }
+  .monitor-live-content .person-card h2 { font-size: 15px; }
+  .monitor-live-content .monitor-last { margin-top: 10px; padding-top: 9px; }
+  .monitor-live-content .monitor-trip-info { gap: 9px; }
+  .monitor-live-content .emergency-contact { padding: 9px; }
+  .monitor-live-content .monitor-disclaimer { font-size: 10px; line-height: 1.4; }
+}
+
+/* Perjalanan desktop: peta dan aksi muat dalam satu layar. */
+@media (min-width: 900px) and (min-height: 700px) {
+  .trip-live-page { height: 100dvh; display: flex; flex-direction: column; }
+  .trip-live-page .app-header { height: 64px; flex: 0 0 64px; }
+  .trip-live-page .app-header-inner { max-width: 1240px; }
+  .trip-live-page-container { width: 100%; max-width: 1240px; flex: 1; min-height: 0; margin: 0 auto; padding: 12px 24px; display: flex; flex-direction: column; }
+  .trip-live-page-container .page-back { margin-bottom: 8px; }
+  .trip-live-page .tracking-page { width: 100%; max-width: none; flex: 1; min-height: 0; display: flex; flex-direction: column; }
+  .trip-live-page .tracking-page > .demo-preview-banner { margin-bottom: 8px; padding: 8px 12px; }
+  .trip-live-page .tracking-page > .error-box { margin-bottom: 8px; }
+  .trip-live-page .tracking-head { margin-bottom: 10px; gap: 12px; }
+  .trip-live-page .tracking-head h1 { font-size: 24px; margin-bottom: 3px; }
+  .trip-live-page .participant-trip-info { margin-top: 10px; gap: 14px; }
+  .trip-live-page .tracking-grid { flex: 0 1 auto; min-height: 0; grid-template-columns: minmax(0, 1.4fr) minmax(0, .8fr); align-items: stretch; gap: 14px; }
+  .trip-live-page .tracking-map-panel { min-height: 0; display: flex; }
+  .trip-live-page .tracking-map { height: auto; min-height: 0; flex: 1; }
+  .trip-live-page .tracking-side { min-height: 0; align-content: start; gap: 8px; overflow-y: auto; }
+  .trip-live-page .stat { padding: 10px 12px; }
+  .trip-live-page .stat-icon { margin-bottom: 5px; }
+  .trip-live-page .share-code-compact { padding: 10px 12px; }
+  .trip-live-page .code-label, .trip-live-page .share-code-compact .access-code { margin-bottom: 5px; }
+  .trip-live-page .share-code-compact .access-code { font-size: 18px; }
+  .trip-live-page .share-code-compact p { margin-bottom: 8px; }
+  .trip-live-page .share-actions .button { min-height: 40px; }
+  .trip-live-page .tracking-actions { padding: 12px; gap: 7px; }
+  .trip-live-page .sos-button { min-height: 48px; }
+  .trip-live-page .small-action { min-height: 44px; }
+}
+
+/* Penjelasan sebelum GPS mulai bekerja setelah perjalanan dibuat. */
+.trip-started-modal { max-width: 470px; max-height: calc(100dvh - 40px); overflow-y: auto; }
+.trip-started-modal > p { margin-bottom: 14px; }
+.trip-started-list { padding-left: 19px; margin: 0 0 22px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.trip-started-list li + li { margin-top: 10px; }
+.trip-started-modal .button { min-height: 52px; }
+
+/* Keterangan kendala SOS; tetap nyaman dipakai di layar kecil. */
+.sos-dialog { max-width: 480px; max-height: calc(100dvh - 40px); overflow-y: auto; }
+.sos-dialog .field { margin-bottom: 17px; }
+.sos-message-input { width: 100%; min-height: 112px; padding: 13px 15px; border: 1px solid var(--line); border-radius: 13px; background: #151611; color: var(--text); font: inherit; font-size: 14px; line-height: 1.5; resize: vertical; }
+.sos-message-input::placeholder { color: #85877b; }
+.sos-message-input:focus { outline: none; border-color: var(--yellow); }
+.sos-message-input:disabled { opacity: .6; }
+.sos-banner > div { min-width: 0; }
+.sos-banner .sos-message { margin: 7px 0 9px; color: #fff2ef; font-size: 13px; line-height: 1.5; white-space: pre-wrap; overflow-wrap: anywhere; }

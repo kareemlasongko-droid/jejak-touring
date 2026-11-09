@@ -17,10 +17,12 @@ export type Trip = {
   access_code: string;
   status: TripStatus;
   sos_at: string | null;
+  sos_message: string | null;
   created_at: string;
   updated_at: string;
   arrived_at: string | null;
   ended_at: string | null;
+  end_reason: "manual" | "timeout" | null;
 };
 
 export type PantauData = {
@@ -37,6 +39,7 @@ export type PantauData = {
   destination_lng: number;
   status: TripStatus;
   sos_at: string | null;
+  sos_message: string | null;
   latitude: number | null;
   longitude: number | null;
   speed: number | null;

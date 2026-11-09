@@ -1,3 +1,21 @@
+export const TRIP_MAX_DURATION_MS = 48 * 60 * 60 * 1000;
+export const DEMO_SOS_KEY = "jejaktouring:demoSos";
+
+export function getDemoSos(): { at: string; message: string } | null {
+  try {
+    const raw = localStorage.getItem(DEMO_SOS_KEY);
+    if (!raw) return null;
+    const value = JSON.parse(raw) as { at?: unknown; message?: unknown };
+    const sentAt = typeof value.at === "string" ? new Date(value.at).getTime() : NaN;
+    if (typeof value.message !== "string" || value.message.trim().length < 5 || value.message.length > 300 ||
+      !Number.isFinite(sentAt) || sentAt > Date.now() || Date.now() - sentAt > 60 * 60 * 1000) {
+      localStorage.removeItem(DEMO_SOS_KEY);
+      return null;
+    }
+    return { at: value.at as string, message: value.message };
+  } catch { return null; }
+}
+
 export function createAccessCode() {
   const alphabet = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
   const random = new Uint32Array(10);

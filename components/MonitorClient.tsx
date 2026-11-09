@@ -6,7 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AlertTriangle, ArrowLeft, CarFront, Clock3, Eye, Gauge, Info, MapPin, MessageCircle, RefreshCw, ShieldAlert } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import type { PantauData } from "@/lib/types";
-import { formatTime, relativeTime } from "@/lib/utils";
+import { formatTime, getDemoSos, relativeTime } from "@/lib/utils";
 
 const LiveMap = dynamic(() => import("@/components/LiveMap"), {
   ssr: false,
@@ -25,6 +25,7 @@ export function MonitorClient({ code }: { code: string }) {
   const load = useCallback(async (manual = false) => {
     if (manual) setRefreshing(true);
     if (isDemo) {
+      const demoSos = getDemoSos();
       setData({
         nickname: "Panther Touring",
         vehicle: "mobil",
@@ -38,7 +39,8 @@ export function MonitorClient({ code }: { code: string }) {
         destination_lat: -6.914744,
         destination_lng: 107.60981,
         status: "aktif",
-        sos_at: null,
+        sos_at: demoSos?.at ?? null,
+        sos_message: demoSos?.message ?? null,
         latitude: -6.597147,
         longitude: 107.044678,
         speed: 20,
@@ -81,18 +83,18 @@ export function MonitorClient({ code }: { code: string }) {
   void tick;
 
   if (loading) return <div className="loading-screen"><div><span className="spinner" />Mencari perjalanan...</div></div>;
-  if (ended || !data) return <section className="empty-state"><div className="monitor-entry-icon"><Clock3 size={30} /></div><h1>Perjalanan tidak tersedia</h1><p>Kode mungkin salah, perjalanan sudah tiba, atau peserta telah menyelesaikannya. Minta kode baru kepada peserta jika perjalanan masih berlangsung.</p><Link href="/pantau" className="button button-primary"><ArrowLeft size={18} /> Masukkan kode lain</Link></section>;
+  if (ended || !data) return <section className="empty-state"><div className="monitor-entry-icon"><Clock3 size={30} /></div><h1>Perjalanan tidak tersedia</h1><p>Kode mungkin salah, perjalanan sudah tiba, selesai, atau telah melewati batas 2 × 24 jam. Minta kode baru kepada peserta jika perjalanan masih berlangsung.</p><Link href="/pantau" className="button button-primary"><ArrowLeft size={18} /> Masukkan kode lain</Link></section>;
 
   const stale = !data.recorded_at || Date.now() - new Date(data.recorded_at).getTime() > 180000;
   const emergencyDigits = data.emergency_contact?.replace(/\D/g, "") ?? "";
   const whatsappNumber = emergencyDigits.startsWith("0") ? `62${emergencyDigits.slice(1)}` : emergencyDigits;
   const passengerSummary = `${data.adult_count ?? 0} dewasa${data.child_count ? `, ${data.child_count} anak` : ""}`;
   return (
-    <div>
+    <div className="monitor-live-content">
       <div className="monitor-heading"><div><h1>Perjalanan {data.nickname}</h1><p>Kode pantau: <strong>{code}</strong></p></div><button className="button button-secondary refresh-button" onClick={() => load(true)} disabled={refreshing}><RefreshCw size={16} className={refreshing ? "spin" : ""} /><span>{refreshing ? "Memuat..." : "Perbarui"}</span></button></div>
 
       {isDemo && <div className="demo-preview-banner" role="status"><Eye size={18} /><span><strong>Preview perjalanan aktif</strong> — ini data demo, bukan lokasi atau perjalanan nyata.</span></div>}
-      {data.sos_at && <div className="sos-banner" role="alert"><ShieldAlert size={25} /><div><strong>Peserta mengaktifkan SOS</strong><p>Dikirim pukul {formatTime(data.sos_at)}. Coba hubungi peserta atau komunitas melalui saluran komunikasi lain. Ini bukan panggilan otomatis ke layanan darurat.</p></div></div>}
+      {data.sos_at && <div className="sos-banner" role="alert"><ShieldAlert size={25} /><div><strong>Peserta mengaktifkan SOS</strong><p className="sos-message">Kendala: {data.sos_message || "Belum ada keterangan kendala."}</p><p>Dikirim pukul {formatTime(data.sos_at)}. Hubungi peserta atau kontak darurat untuk membantu. Ini bukan panggilan otomatis ke layanan darurat.</p></div></div>}
       {stale && <div className="stale-banner" role="status"><AlertTriangle size={20} /><span><strong>Data lama.</strong> Tidak ada lokasi baru selama lebih dari 3 menit. Peserta mungkin kehilangan sinyal atau halaman pelacak tidak aktif.</span></div>}
       {error && <div className="error-box">{error}</div>}
 
