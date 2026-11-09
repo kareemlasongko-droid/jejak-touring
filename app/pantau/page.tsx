@@ -8,9 +8,9 @@ export const metadata: Metadata = { title: "Pantau perjalanan" };
 
 export default function MonitorPage() {
   return (
-    <main className="app-page">
+    <main className="app-page monitor-entry-page">
       <AppHeader />
-      <div className="page-container"><div className="page-back"><Link href="/" className="back-link"><ArrowLeft size={16} /> Kembali</Link></div><MonitorEntry /></div>
+      <div className="page-container monitor-entry-page-container"><div className="page-back"><Link href="/" className="back-link"><ArrowLeft size={16} /> Kembali</Link></div><MonitorEntry /></div>
     </main>
   );
 }

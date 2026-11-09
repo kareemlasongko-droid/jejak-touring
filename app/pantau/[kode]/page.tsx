@@ -10,9 +10,9 @@ export default async function MonitoringPage({ params }: { params: Promise<{ kod
   const { kode } = await params;
   const code = decodeURIComponent(kode).toUpperCase();
   return (
-    <main className="app-page">
+    <main className="app-page monitor-live-page">
       <AppHeader />
-      <div className="page-container monitor-page-container"><div className="page-back"><Link href="/pantau" className="back-link"><ArrowLeft size={16} /> Kembali</Link></div><MonitorClient code={code} /></div>
+      <div className="page-container monitor-page-container monitor-live-page-container"><div className="page-back"><Link href="/pantau" className="back-link"><ArrowLeft size={16} /> Kembali</Link></div><MonitorClient code={code} /></div>
     </main>
   );
 }

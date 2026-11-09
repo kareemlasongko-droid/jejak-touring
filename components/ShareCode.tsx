@@ -1,10 +1,10 @@
 "use client";
 
-import { Check, Copy, Share2 } from "lucide-react";
+import { Check, Copy, KeyRound, Share2 } from "lucide-react";
 import { useState } from "react";
 import { monitoringLink } from "@/lib/utils";
 
-export function ShareCode({ code, compact = false }: { code: string; compact?: boolean }) {
+export function ShareCode({ code, compact = false, onNewCode }: { code: string; compact?: boolean; onNewCode?: () => void }) {
   const [copied, setCopied] = useState(false);
 
   async function copy() {
@@ -35,6 +35,7 @@ export function ShareCode({ code, compact = false }: { code: string; compact?: b
         <button className="button button-primary" onClick={share}><Share2 size={18} /> Bagikan tautan</button>
         <button className="button button-secondary" onClick={copy}>{copied ? <Check size={18} /> : <Copy size={18} />}{copied ? "Tersalin" : "Salin"}</button>
       </div>
+      {onNewCode && <button type="button" className="button button-secondary small-action share-new-code" onClick={onNewCode}><KeyRound size={17} /> Buat kode baru</button>}
     </div>
   );
 }

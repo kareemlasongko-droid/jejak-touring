@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { CarFront, ChevronRight, Crosshair, Info, MapPin, Navigation, UsersRound } from "lucide-react";
 import { ensureAnonymousSession, supabase } from "@/lib/supabase";
-import { createAccessCode } from "@/lib/utils";
+import { createAccessCode, TRIP_MAX_DURATION_MS } from "@/lib/utils";
 import { OccupantModal, VehicleModal, type OccupantDetails, type VehicleDetails } from "@/components/TripInfoModals";
 
 const MapPicker = dynamic(() => import("@/components/MapPicker"), {
@@ -25,6 +25,7 @@ export function StartForm() {
   const [position, setPosition] = useState<{ lat: number; lng: number } | null>(null);
   const [focus, setFocus] = useState<{ lat: number; lng: number } | null>(null);
   const [busy, setBusy] = useState(false);
+  const [createdTripId, setCreatedTripId] = useState<string | null>(null);
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState("");
 
@@ -50,6 +51,7 @@ export function StartForm() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (busy || createdTripId) return;
     setError("");
     if (tripName.trim().length < 2) {
       setError("Masukkan nama perjalanan minimal 2 huruf.");
@@ -82,11 +84,13 @@ export function StartForm() {
           destination_lat: position.lat,
           destination_lng: position.lng,
           access_code: createAccessCode(),
-        }).select("id").single();
+        }).select("id,created_at").single();
         if (!insertError && data) {
           localStorage.setItem("jejaktouring:activeTrip", data.id);
+          localStorage.setItem("jejaktouring:activeTripExpiresAt", String(new Date(data.created_at).getTime() + TRIP_MAX_DURATION_MS));
           localStorage.removeItem(`jejaktouring:queue:${data.id}`);
-          router.push(`/perjalanan/${data.id}`);
+          setCreatedTripId(data.id);
+          setBusy(false);
           inserted = true;
         } else if (insertError?.code !== "23505") {
           throw insertError;
@@ -110,7 +114,7 @@ export function StartForm() {
 
   return (
     <>
-      <form onSubmit={submit}>
+      <form className="start-form" onSubmit={submit}>
         <div className="form-layout">
           <section className="panel">
             <h2>Tentang perjalanan</h2>
@@ -151,6 +155,21 @@ export function StartForm() {
 
       {modal === "vehicle" && <VehicleModal initial={vehicleDetails} onClose={() => setModal(null)} onSave={(value) => { setVehicleDetails(value); setModal(null); setError(""); }} />}
       {modal === "occupants" && <OccupantModal initial={occupantDetails} onClose={() => setModal(null)} onSave={(value) => { setOccupantDetails(value); setModal(null); setError(""); }} />}
+      {createdTripId && (
+        <div className="modal-backdrop" role="presentation">
+          <section className="modal trip-started-modal" role="dialog" aria-modal="true" aria-labelledby="trip-started-title" aria-describedby="trip-started-description">
+            <span className="modal-symbol"><Info size={25} /></span>
+            <h2 id="trip-started-title">Perjalanan berhasil dibuat</h2>
+            <p id="trip-started-description">Lokasi mulai dibagikan setelah Anda membuka halaman perjalanan dan mengizinkan akses lokasi.</p>
+            <ul className="trip-started-list">
+              <li>Biarkan halaman perjalanan terbuka, dengan GPS dan internet menyala. Saat layar terkunci atau berpindah aplikasi, pembaruan lokasi bisa berhenti.</li>
+              <li>Hanya orang yang punya kode pantau dapat melihat lokasi terakhir beserta waktu pembaruannya. Posisi tidak selalu bergerak setiap detik.</li>
+              <li>Kode pantau berhenti berlaku saat Anda tiba, menyelesaikan touring, atau setelah 2 × 24 jam.</li>
+            </ul>
+            <button type="button" className="button button-primary button-full" autoFocus onClick={() => router.push(`/perjalanan/${createdTripId}`)}>Paham, buka perjalanan</button>
+          </section>
+        </div>
+      )}
     </>
   );
 }

@@ -6,7 +6,16 @@ import { useEffect, useState } from "react";
 
 export function ResumeTrip() {
   const [tripId, setTripId] = useState<string | null>(null);
-  useEffect(() => setTripId(localStorage.getItem("jejaktouring:activeTrip")), []);
+  useEffect(() => {
+    const id = localStorage.getItem("jejaktouring:activeTrip");
+    const expiresAt = Number(localStorage.getItem("jejaktouring:activeTripExpiresAt"));
+    if (id && expiresAt > 0 && Date.now() >= expiresAt) {
+      localStorage.removeItem("jejaktouring:activeTrip");
+      localStorage.removeItem("jejaktouring:activeTripExpiresAt");
+      return;
+    }
+    setTripId(id);
+  }, []);
   if (!tripId) return null;
   return (
     <Link href={`/perjalanan/${tripId}`} className="resume-card">
